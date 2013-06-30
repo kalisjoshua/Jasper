@@ -8,6 +8,7 @@ I hope to add on to this library with some useful features:
   * When complete providing a hash ID for submission with resumes
   * Scoring with questions that have difficulty rankings
   * Intentional holes in security for hacking
+  * Externalize the tasks so they can be customized per implementation
 
 ## The Levels So Far
 
