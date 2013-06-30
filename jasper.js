@@ -114,7 +114,7 @@ var Jasper = (function () {
     }
   };
 
-  console.log("Jasper is waiting, for you to start...");
+  console.log("'Jasper' is waiting, for you to 'start'...");
 
   return function jasper_engine (command, arg) {
     // run a util method if asked for or no arguments
