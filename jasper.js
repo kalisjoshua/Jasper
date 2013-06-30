@@ -14,6 +14,12 @@ var Jasper = (function () {
     return fn;
   }
 
+  function fnError (e) {
+    console.log("Ooops, did you pass a function?");
+    console.error(e);
+    return false;
+  }
+
   success = (function () {
     var length, words;
 
@@ -39,17 +45,52 @@ var Jasper = (function () {
 
   levels = [
     ask("Call Jasper with one argument: 'start'.", function (str) {
-      return (/start/i).test(str);
+      return "start" === str;
     })
     ,ask("Pass in a function that returns true.", function (cb) {
       try {
         return true === cb();
       } catch (e) {
-        console.log("Ooops, did you pass a function?");
+        return fnError(e);
+      }
+    })
+    ,ask("Provide an object with two properties: 'a' and 'b'.", function (obj) {
+      return (undef !== obj.a && undef !== obj.b);
+    })
+    ,ask("Send a JSON string with a, 'good', 'do' property.", function (json) {
+      try {
+        return "good" === JSON.parse(json)["do"];
+      } catch (e) {
+        console.log("The JSON syntax seems to be invalid.");
         console.error(e);
         return false;
       }
     })
+    ,ask("Write a function to sum any number of numbers.", function (fn) {
+      var inputs
+        , sum = 0;
+
+      // build a random length array with random values
+      inputs = Array
+        // random length array
+        .apply(null, Array(~~(Math.random() * 32)))
+        .map(function () {
+          // with random values
+          var num = ~~(Math.random() * 1024);
+
+          // caching the sum to test the results
+          sum += num;
+
+          return num;
+        });
+
+      try {
+        return sum === fn.apply(null, inputs);
+      } catch (e) {
+        return fnError(e);
+      }
+    })
+    // ,ask("", function () {})
   ];
 
   utils = {
@@ -65,6 +106,9 @@ var Jasper = (function () {
     }
 
     , skip: function (num) {
+      if (num < 0) {
+        num = levels.length -1;
+      }
       progress += (~~num || 1);
       return utils.help();
     }
@@ -72,11 +116,11 @@ var Jasper = (function () {
 
   console.log("Jasper is waiting, for you to start...");
 
-  return function jasper_engine (arg) {
+  return function jasper_engine (command, arg) {
     // run a util method if asked for or no arguments
-    if (utils[arg] || 0 === arguments.length) {
+    if (utils[command] || 0 === arguments.length) {
       // default to the 'help' util method
-      return utils[arg || "help"]();
+      return utils[command || "help"](arg);
     } else {
       // if complete don't try and read off the end of the array
       if (progress !== levels.length) {
