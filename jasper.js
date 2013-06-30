@@ -16,8 +16,7 @@ var Jasper = (function () {
 
   function fnError (e) {
     console.log("Ooops, did you pass a function?");
-    console.error(e);
-    return false;
+    throw e;
   }
 
   success = (function () {
@@ -57,7 +56,7 @@ var Jasper = (function () {
     ,ask("Provide an object with two properties: 'a' and 'b'.", function (obj) {
       return (undef !== obj.a && undef !== obj.b);
     })
-    ,ask("Send a JSON string with a, 'good', 'do' property.", function (json) {
+    ,ask("Send a JSON string that has a property 'good' with the value 'do'", function (json) {
       try {
         return "good" === JSON.parse(json)["do"];
       } catch (e) {
@@ -66,7 +65,7 @@ var Jasper = (function () {
         return false;
       }
     })
-    ,ask("Write a function to sum any number of numbers.", function (fn) {
+    ,ask("Write a function to sum any number of number arguments.", function (fn) {
       var inputs
         , sum = 0;
 
@@ -89,6 +88,19 @@ var Jasper = (function () {
       } catch (e) {
         return fnError(e);
       }
+    })
+    ,ask("Write a funciton that takes an argument and returns a function that returns that argument.", function (fn) {
+      try {
+        return [42, "good stuff", /asdf/]
+          .reduce(function (acc, arg) {
+            return acc && fn(arg)() === arg;
+          }, true);
+      } catch (e) {
+        return fnError(e);
+      }
+    })
+    ,ask("Execute Jasper with a context that matches its argument.", function (arg) {
+      return this == arg;
     })
     // ,ask("", function () {})
   ];
@@ -125,7 +137,7 @@ var Jasper = (function () {
       // if complete don't try and read off the end of the array
       if (progress !== levels.length) {
         // pass the arguments to the level function to check correctness
-        if (levels[progress].apply(null, arguments)) {
+        if (levels[progress].apply(this, arguments)) {
           progress++;
           console.log(success());
         } else {

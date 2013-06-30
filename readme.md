@@ -26,7 +26,7 @@ I hope to add on to this library with some useful features:
 
 **level three** (in progress still)
 
-  1. handle an async event
+  1. write a closure
   2. change the context of a function’s execution
   3. add a method to an object’s prototype
 
