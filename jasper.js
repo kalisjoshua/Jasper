@@ -1,72 +1,95 @@
 /*jshint laxcomma:true*/
 
 var Jasper = (function () {
-  var API
-    , levels
+  var levels
     , progress = 0
-    , slice = [].slice
-    , toString = {}.toString
+    , success
+    , undef = (function (u) {return u;}())
+    , utils
     ;
 
-  API = {
-    callback: function (cb) {
-      var result;
+  function ask (intro, fn) {
+    fn.intro = intro;
 
+    return fn;
+  }
+
+  success = (function () {
+    var length, words;
+
+    words = ("Admirable Awesome Brilliant Capital Excellent Fabulous " +
+      "Fantabulous Glorious Good Great Impressive Keen Magnificent " +
+      "Outstanding Resplendent Splendid Splendiferous Superb Superior " +
+      "Swanky")
+      .split(" ");
+
+    length = words.length;
+
+    return function () {
+      var indx = ~~(Math.random() * length) % length;
+
+      words = words
+        .slice(indx)
+        .concat(words.slice(0, indx));
+
+      return ("%" + ["!", "."][~~(Math.random() * 2)])
+        .replace("%", words[0]);
+    };
+  }());
+
+  levels = [
+    ask("Call Jasper with one argument: 'start'.", function (str) {
+      return (/start/i).test(str);
+    })
+    ,ask("Pass in a function that returns true.", function (cb) {
       try {
-        result = cb();
-        return true === result && "Great, now we start getting more difficult.";
+        return true === cb();
       } catch (e) {
-        return "Ooops, did you pass a function?";
+        console.log("Ooops, did you pass a function?");
+        console.error(e);
+        return false;
       }
-    },
+    })
+  ];
 
-    reset: function () {
+  utils = {
+    help: function () {
+      return progress < levels.length
+        ? levels[progress].intro
+        : "Congratulations you're done; start over with Jasper('reset').";
+    }
+
+    , reset: function () {
       progress = 0;
-      return "All set; go again?";
-    },
+      return "All clear; go again?";
+    }
 
-    skip: function (num) {
+    , skip: function (num) {
       progress += (~~num || 1);
-    },
-
-    start: function () {
-      return "Very good; now pass 'callback' and a function that returns true.";
+      return utils.help();
     }
   };
 
-  levels = "start callback".split(" ");
+  console.log("Jasper is waiting, for you to start...");
 
-  function jasper (name) {
-    var response;
-
-    if (0 === arguments.length || !/string/i.test(toString.call(name))) {
-      return "You have to tell me what to do.";
-    }
-
-    if (~levels.indexOf(name)) {
-      response = API[name].apply(null, slice.call(arguments, 1));
+  return function jasper_engine (arg) {
+    // run a util method if asked for or no arguments
+    if (utils[arg] || 0 === arguments.length) {
+      // default to the 'help' util method
+      return utils[arg || "help"]();
     } else {
-      return "Sorry '%' not available at this time.".replace("%", name);
-    }
-
-    if (name === levels[progress]) {
-      if (response) {
-        progress++;
-        return response;
-      } else {
-        return "Not quite try again.";
-      }
-    } else {
-      if (progress === levels.length) {
-        return "You're done; start over with Jasper('reset').";
-      } else {
-        return "Come on now, no skipping around; you're at: " +
-          levels[progress];
+      // if complete don't try and read off the end of the array
+      if (progress !== levels.length) {
+        // pass the arguments to the level function to check correctness
+        if (levels[progress].apply(null, arguments)) {
+          progress++;
+          console.log(success());
+        } else {
+          return "Not quite try again.";
+        }
       }
     }
-  }
 
-  console.log("Interested in teh JavaScripts? Run, Jasper('start') to see what you are made of.");
-
-  return jasper;
+    return jasper_engine();
+  };
 }());

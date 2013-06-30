@@ -31,9 +31,9 @@ var candidate = (function () {
 
 **level two**
 
-1. write a function to accept an unknown number of arguments and sum them
-2. pass an object with a specific method available
-3. provide a JSON string with some properties
+1. pass an object with a specific method available
+2. provide a JSON string with some properties
+3. write a function to accept an unknown number of arguments and sum them
 
 **level three**
 
