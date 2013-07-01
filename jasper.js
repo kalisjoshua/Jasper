@@ -89,7 +89,7 @@ var Jasper = (function () {
         return fnError(e);
       }
     })
-    ,ask("Write a funciton that takes an argument and returns a function that returns that argument.", function (fn) {
+    ,ask("Write a function that takes an argument and returns a function that returns that argument.", function (fn) {
       try {
         return [42, "good stuff", /asdf/]
           .reduce(function (acc, arg) {
