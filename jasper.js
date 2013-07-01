@@ -4,7 +4,7 @@ var Jasper = (function () {
   var levels
     , progress = 0
     , success
-    , undef = (function (u) {return u;}())
+    , undef = void 0 // undefined
     , utils
     ;
 
