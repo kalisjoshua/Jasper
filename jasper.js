@@ -102,6 +102,19 @@ var Jasper = (function () {
     ,ask("Execute Jasper with a context that matches its argument.", function (arg) {
       return this == arg;
     })
+    ,ask("Add a 'jasper' method to the prototype of the object passed to the function your write.", function (fn) {
+      function F () {}
+
+      var obj = new F();
+
+      try {
+        fn(F);
+      } catch (e) {
+        return fnError(e);
+      }
+
+      return obj.jasper && /function/i.test({}.toString.call(obj.jasper)) && !obj.hasOwnProperty("jasper");
+    })
     // ,ask("", function () {})
   ];
 
