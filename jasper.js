@@ -115,6 +115,35 @@ var Jasper = (function () {
 
       return obj.jasper && /function/i.test({}.toString.call(obj.jasper)) && !obj.hasOwnProperty("jasper");
     })
+    ,ask("Write a function that will accept two values, if two parameters are passed it will add them together, but if one parameter is passed (x) it will return a function that will expect an other parameter (y) and add the two parameters together (x + y)", function (fn) {
+    
+        // Prepare the test data, and actual results
+        var x = ~~(Math.random()*100),
+            y = ~~(Math.random()*100),
+            expectedResult = (x+y),
+            additionResult = 0,
+            fn1Result,
+            fn2Result;
+       
+        try {
+            // Case1: pass the 2 parameters
+            additionResult = fn(x,y);
+        } catch (e) {
+            return fnError(e);
+        }
+        
+        try {
+            // Case2: First pass only 1 parameter
+            fn1Result = fn(x);
+            // Now pass the second parameter the the returned function
+            fn2Result = fn1Result(y);
+        } catch (e) {
+            return fnError(e);
+        }
+        
+        // Assert all the reslts
+        return (expectedResult === additionResult) && (expectedResult === fn2Result);
+    })
     // ,ask("", function () {})
   ];
 
