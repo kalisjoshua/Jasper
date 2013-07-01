@@ -2,6 +2,8 @@
 
 Jasper provides a series of JavaScript tasks to accomplish using a browser's console as an interface. The tasks increase in difficulty as each one is accomplished.
 
+ **Demo: http://kalisjoshua.github.io/Jasper/**
+
 I hope to add on to this library with some useful features:
 
   * Tracking correct / incorrect answers and reporting to a backend
