@@ -56,7 +56,7 @@ var Jasper = (function () {
     ,ask("Provide an object with two properties: 'a' and 'b'.", function (obj) {
       return (undef !== obj.a && undef !== obj.b);
     })
-    ,ask("Send a JSON string that has a property 'good' with the value 'do'", function (json) {
+    ,ask("Send a JSON string that has a property 'do' with the value 'good'", function (json) {
       try {
         return "good" === JSON.parse(json)["do"];
       } catch (e) {
