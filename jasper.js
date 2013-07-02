@@ -1,25 +1,15 @@
 /*jshint laxcomma:true*/
 
 var Jasper = (function () {
-  var levels
+  "use strict";
+
+  var adjectives
+    , levels = []
     , progress = 0
-    , success
-    , undef = void 0 // undefined
     , utils
     ;
 
-  function ask (intro, fn) {
-    fn.intro = intro;
-
-    return fn;
-  }
-
-  function fnError (e) {
-    console.log("Ooops, did you pass a function?");
-    throw e;
-  }
-
-  success = (function () {
+  adjectives = (function () {
     var length, words;
 
     words = ("Admirable Awesome Brilliant Capital Excellent Fabulous " +
@@ -42,87 +32,32 @@ var Jasper = (function () {
     };
   }());
 
-  levels = [
-    ask("Call Jasper with one argument: 'start'.", function (str) {
-      return "start" === str;
-    })
-    ,ask("Pass in a function that returns true.", function (cb) {
-      try {
-        return true === cb();
-      } catch (e) {
-        return fnError(e);
-      }
-    })
-    ,ask("Provide an object with two properties: 'a' and 'b'.", function (obj) {
-      return (undef !== obj.a && undef !== obj.b);
-    })
-    ,ask("Send a JSON string that has a property 'do' with the value 'good'", function (json) {
-      try {
-        return "good" === JSON.parse(json)["do"];
-      } catch (e) {
-        console.log("The JSON syntax seems to be invalid.");
-        console.error(e);
-        return false;
-      }
-    })
-    ,ask("Write a function to sum any number of number arguments.", function (fn) {
-      var inputs
-        , sum = 0;
-
-      // build a random length array with random values
-      inputs = Array
-        // random length array
-        .apply(null, Array(~~(Math.random() * 32)))
-        .map(function () {
-          // with random values
-          var num = ~~(Math.random() * 1024);
-
-          // caching the sum to test the results
-          sum += num;
-
-          return num;
-        });
-
-      try {
-        return sum === fn.apply(null, inputs);
-      } catch (e) {
-        return fnError(e);
-      }
-    })
-    ,ask("Write a funciton that takes an argument and returns a function that returns that argument.", function (fn) {
-      try {
-        return [42, "good stuff", /asdf/]
-          .reduce(function (acc, arg) {
-            return acc && fn(arg)() === arg;
-          }, true);
-      } catch (e) {
-        return fnError(e);
-      }
-    })
-    ,ask("Execute Jasper with a context that matches its argument.", function (arg) {
-      return this == arg;
-    })
-    ,ask("Add a 'jasper' method to the prototype of the object passed to the function your write.", function (fn) {
-      function F () {}
-
-      var obj = new F();
-
-      try {
-        fn(F);
-      } catch (e) {
-        return fnError(e);
-      }
-
-      return obj.jasper && /function/i.test({}.toString.call(obj.jasper)) && !obj.hasOwnProperty("jasper");
-    })
-    // ,ask("", function () {})
-  ];
-
   utils = {
-    help: function () {
+    ask: function (intro, fn) {
+      switch (arguments.length) {
+        case 2:
+          fn.intro = intro;
+          levels.push(fn);
+          break;
+        case 1:
+          // not sure what to do here yet, but it'll come to me
+          break;
+        default:
+          utils.lock();
+          break;
+      }
+    }
+
+    , help: function () {
       return progress < levels.length
         ? levels[progress].intro
         : "Congratulations you're done; start over with Jasper('reset').";
+    }
+
+    , lock: function () {
+      utils.ask = function () {
+        throw new Error("Jasper has been locked, no new asks may be added.");
+      };
     }
 
     , reset: function () {
@@ -139,26 +74,109 @@ var Jasper = (function () {
     }
   };
 
-  console.log("'Jasper' is waiting, for you to 'start'...");
+  console.log("'Jasper' is waiting for you to, 'start'...");
 
-  return function jasper_engine (command, arg) {
+  function jasper_engine (command, arg) {
+    /*jshint validthis:true*/
+    // default to the 'help' util method
+    command = command || "help";
+
     // run a util method if asked for or no arguments
     if (utils[command] || 0 === arguments.length) {
-      // default to the 'help' util method
-      return utils[command || "help"](arg);
+      // only pass the arguments if provided
+      return arg ? utils[command].apply(this, [].slice.call(arguments, 1)) : utils[command]();
     } else {
       // if complete don't try and read off the end of the array
       if (progress !== levels.length) {
-        // pass the arguments to the level function to check correctness
-        if (levels[progress].apply(this, arguments)) {
-          progress++;
-          console.log(success());
-        } else {
-          return "Not quite try again.";
+        try {
+          // pass the arguments to the level function to check correctness
+          if (levels[progress].apply(this, arguments)) {
+            progress++;
+            console.log(adjectives());
+          } else {
+            return "Not quite try again.";
+          }
+        } catch (e) {
+          // TODO: log a helpful message?
+          throw e;
         }
       }
     }
 
+    // call the engine again to show the intro for the next ask
+    return jasper_engine();
+  }
+
+  // hints to help people find the path to enlightenment
+  jasper_engine.help =
+  jasper_engine.start =
+  jasper_engine.toString =
+  function () {
     return jasper_engine();
   };
+
+  return jasper_engine;
 }());
+
+
+Jasper("ask", "Call Jasper with one argument: 'start'.", function (str) {
+  return "start" === str;
+});
+
+Jasper("ask", "Pass in a function that returns true.", function (cb) {
+  return true === cb();
+});
+
+Jasper("ask", "Provide an object with two properties: 'a' and 'b'.", function (obj) {
+  return ((void 0) !== obj.a && (void 0) !== obj.b);
+});
+
+Jasper("ask", "Send a JSON string that has a property 'do' with the value 'good'", function (json) {
+  return "good" === JSON.parse(json)["do"];
+});
+
+Jasper("ask", "Write a function to sum any number of number arguments.", function (fn) {
+  var inputs
+    , sum = 0;
+
+  // build a random length array with random values
+  inputs = Array
+    // random length array
+    .apply(null, Array(~~(Math.random() * 32)))
+    .map(function () {
+      // with random values
+      var num = ~~(Math.random() * 1024);
+
+      // caching the sum to test the results
+      sum += num;
+
+      return num;
+    });
+
+  return sum === fn.apply(null, inputs);
+});
+
+Jasper("ask", "Write a function that takes an argument and returns a function that returns that argument.", function (fn) {
+  return [42, "good stuff", /asdf/]
+    .reduce(function (acc, arg) {
+      return acc && fn(arg)() === arg;
+    }, true);
+});
+
+Jasper("ask", "Execute Jasper with a context that matches its argument.", function (arg) {
+  return this == arg;
+});
+
+Jasper("ask", "Add a 'jasper' method to the prototype of the object passed to the function your write.", function (fn) {
+  function F () {}
+
+  var obj = new F();
+
+  fn(F);
+
+  return obj.jasper && /function/i.test({}.toString.call(obj.jasper)) && !obj.hasOwnProperty("jasper");
+});
+
+// Jasper("ask", "", function () {});
+
+Jasper("ask"); // lock the list of asks
