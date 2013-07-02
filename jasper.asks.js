@@ -57,6 +57,18 @@ Jasper("ask", "Add a 'jasper' method to the prototype of the object passed to th
   return obj.jasper && /function/i.test({}.toString.call(obj.jasper)) && !obj.hasOwnProperty("jasper");
 });
 
+Jasper("ask", "Pass a function that throws an error with message 'up'", function (fn) {
+  var message = 'up';
+
+  try {
+    fn();
+  } catch (e) {
+    return message === e;
+  }
+
+  return false;
+});
+
 // Jasper("ask", "", function () {});
 
 Jasper("ask"); // lock the list of asks
