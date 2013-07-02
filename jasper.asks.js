@@ -11,6 +11,18 @@ Jasper("ask", "Provide an object with two properties: 'a' and 'b'.", function (o
   return ((void 0) !== obj.a && (void 0) !== obj.b);
 });
 
+Jasper("ask", "Pass a function that throws an error with message 'up'", function (fn) {
+  var message = 'up';
+
+  try {
+    fn();
+  } catch (e) {
+    return message === e;
+  }
+
+  return false;
+});
+
 Jasper("ask", "Send a JSON string that has a property 'do' with the value 'good'", function (json) {
   return "good" === JSON.parse(json)["do"];
 });
@@ -55,18 +67,6 @@ Jasper("ask", "Add a 'jasper' method to the prototype of the object passed to th
   fn(F);
 
   return obj.jasper && /function/i.test({}.toString.call(obj.jasper)) && !obj.hasOwnProperty("jasper");
-});
-
-Jasper("ask", "Pass a function that throws an error with message 'up'", function (fn) {
-  var message = 'up';
-
-  try {
-    fn();
-  } catch (e) {
-    return message === e;
-  }
-
-  return false;
 });
 
 // Jasper("ask", "", function () {});
