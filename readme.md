@@ -12,26 +12,6 @@ I hope to add on to this library with some useful features:
   * Intentional holes in security for hacking
   * Externalize the tasks so they can be customized per implementation
 
-## The Levels So Far
-
-**level one**
-
-  1. open the console
-  2. call a function
-  3. pass a function as an argument
-
-**level two**
-
-  1. pass an object with a specific method available
-  2. provide a JSON string with some properties
-  3. write a function to accept an unknown number of arguments and sum them 
-
-**level three** (in progress still)
-
-  1. write a closure
-  2. change the context of a function’s execution
-  3. add a method to an object’s prototype
-
 ## Hopes And Dreams
 
 I am not a fan of "typical" interview questions: 
