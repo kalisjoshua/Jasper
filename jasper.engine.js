@@ -35,11 +35,11 @@ var Jasper = (function () {
   utils = {
     ask: function (intro, fn) {
       switch (arguments.length) {
-        case 2:
+        case 2:        
           fn.intro = intro;
           levels.push(fn);
           break;
-        case 1:
+        case 1:          
           // not sure what to do here yet, but it'll come to me
           break;
         default:
@@ -92,7 +92,12 @@ var Jasper = (function () {
           // pass the arguments to the level function to check correctness
           if (levels[progress].apply(this, arguments)) {
             progress++;
-            console.log(adjectives());
+
+            if ( 1 === progress ) {
+              console.log(adjectives() + ' Level 1 was to open your console and initialize Jasper. GL! HF!');
+            } else {
+              console.log(adjectives());
+            }            
           } else {
             return "Not quite try again.";
           }
