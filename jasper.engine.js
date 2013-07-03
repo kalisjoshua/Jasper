@@ -33,18 +33,23 @@ var Jasper = (function () {
   }());
 
   utils = {
-    ask: function (intro, fn) {
-      switch (arguments.length) {
-        case 2:
-          fn.intro = intro;
-          levels.push(fn);
-          break;
-        case 1:
-          // not sure what to do here yet, but it'll come to me
-          break;
-        default:
-          utils.lock();
-          break;
+    ask: function (intro, success, fn) {
+      var length = arguments.length;
+
+      // Make second param optional
+      if (2 === length) {
+        fn      = success;
+        success = '';
+      }
+
+      if (2 === length || 3 === length) {
+        fn.intro   = intro;
+        fn.success = success;
+        levels.push(fn);
+      }
+
+      if (0 === length) {
+        utils.lock();
       }
     }
 
@@ -90,9 +95,9 @@ var Jasper = (function () {
       if (progress !== levels.length) {
         try {
           // pass the arguments to the level function to check correctness
-          if (levels[progress].apply(this, arguments)) {
+          if (levels[progress].apply(this, arguments)) {            
+            console.log(adjectives() + ' ' + levels[progress].success || '');
             progress++;
-            console.log(adjectives());
           } else {
             return "Not quite try again.";
           }
