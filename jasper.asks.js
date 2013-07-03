@@ -1,5 +1,6 @@
 
-Jasper("ask", "Level 1: Call Jasper with one argument: 'start'.", function (str) {
+Jasper("ask", "Level 1: Call Jasper with one argument: 'start'.", 
+  "Level 1 was to open your console and initialize Jasper. GL! HF!", function (str) {
   return "start" === str;
 });
 
