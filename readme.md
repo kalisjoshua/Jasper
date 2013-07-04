@@ -10,3 +10,7 @@ I hope to add on to this library with some useful features:
   * When complete, providing a hash ID for submission with resumes
   * Scoring with questions that have difficulty rankings
   * Intentional holes in security for hacking
+
+# License
+
+Licensed under the [WTFPL v2](http://www.wtfpl.net/). Specifically [LICENSE](LICENSE).
