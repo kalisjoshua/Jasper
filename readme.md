@@ -1,4 +1,4 @@
-# Jasper
+# Jasper [![Build Status](https://travis-ci.org/kalisjoshua/Jasper.png?branch=master)](https://travis-ci.org/kalisjoshua/Jasper)
 
 Jasper provides an API, and engine, to cycle through challenges that will hopefully help identify areas of knowledge or learning opportunities in the user. The challenges are designed to increase in difficulty (or obscurity) as you answer more.
 
