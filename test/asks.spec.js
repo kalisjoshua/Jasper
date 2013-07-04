@@ -10,7 +10,7 @@ describe('User ', function() {
     Jasper('reset');
   });
 
-  it('should provide answer to initial question', function() {
+  it('should provide answer to return true challenge', function() {
     var feedback = Jasper(function() {
       return true;
     });
@@ -18,7 +18,7 @@ describe('User ', function() {
     expect(feedback).not.toBe('Not quite try again.');
   });
 
-  it('should provide answer to question 1', function() {
+  it('should provide answer to object literal challenge', function() {
     Jasper('skip', 1);
     var feedback = Jasper({
       a: 1,
@@ -28,7 +28,7 @@ describe('User ', function() {
     expect(feedback).not.toBe('Not quite try again.');
   });
 
-  it('should provide answer to question 2', function() {
+  it('should provide answer to throw error challenge', function() {
     Jasper('skip', 2);
     var feedback = Jasper(function() {
       throw new Error('up');
@@ -37,7 +37,7 @@ describe('User ', function() {
     expect(feedback).not.toBe('Not quite try again.');
   });
 
-  it('should provide answer to question 3', function() {
+  it('should provide answer to JSON string challenge', function() {
     Jasper('skip', 3);
     var json = JSON.stringify({
       'do': 'good'
@@ -47,7 +47,7 @@ describe('User ', function() {
     expect(feedback).not.toBe('Not quite try again.');
   });
 
-  it('should provide answer to question 4', function() {
+  it('should provide answer to sum arguments challenge', function() {
     Jasper('skip', 4);
     var feedback = Jasper(function() {
       var sum = 0;
@@ -61,7 +61,7 @@ describe('User ', function() {
     expect(feedback).not.toBe('Not quite try again.');
   });
 
-  it('should provide answer to question 5', function() {
+  it('should provide answer to simple closure challenge', function() {
     Jasper('skip', 5);
     var feedback = Jasper(function(arg) {
       return function() {
@@ -72,7 +72,7 @@ describe('User ', function() {
     expect(feedback).not.toBe('Not quite try again.');
   });
 
-  it('should provide answer to question 6', function() {
+  it('should provide answer to context change challenge', function() {
     Jasper('skip', 6);
     var context = {
       a: 1
@@ -83,7 +83,7 @@ describe('User ', function() {
     expect(feedback).not.toBe('Not quite try again.');
   });
 
-  it('should provide answer to question 7', function() {
+  it('should provide answer to prototype addition challenge', function() {
     Jasper('skip', 7);
 
     var feedback = Jasper(function(object) {
