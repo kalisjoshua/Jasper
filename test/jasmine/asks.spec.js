@@ -1,8 +1,8 @@
 describe('User ', function() {
   'use strict';
 
-  var errorFeedback = 'Not quite try again.';
   var jasper = Jasper;
+  var errorFeedback = 'Not quite try again.';
 
   beforeEach(function() {
     jasper('start');
@@ -17,7 +17,7 @@ describe('User ', function() {
       return true;
     });
 
-    expect(feedback).not.toBe('Not quite try again.');
+    expect(feedback).not.toBe(errorFeedback);
   });
 
   it('should provide answer to object literal challenge', function() {
@@ -27,7 +27,7 @@ describe('User ', function() {
       b: 1
     });
 
-    expect(feedback).not.toBe('Not quite try again.');
+    expect(feedback).not.toBe(errorFeedback);
   });
 
   it('should provide answer to throw error challenge', function() {
@@ -36,7 +36,7 @@ describe('User ', function() {
       throw new Error('up');
     });
 
-    expect(feedback).not.toBe('Not quite try again.');
+    expect(feedback).not.toBe(errorFeedback);
   });
 
   it('should provide answer to JSON string challenge', function() {
@@ -46,7 +46,7 @@ describe('User ', function() {
     });
     var feedback = jasper(json);
 
-    expect(feedback).not.toBe('Not quite try again.');
+    expect(feedback).not.toBe(errorFeedback);
   });
 
   it('should provide answer to sum arguments challenge', function() {
@@ -60,7 +60,7 @@ describe('User ', function() {
       return sum;
     });
 
-    expect(feedback).not.toBe('Not quite try again.');
+    expect(feedback).not.toBe(errorFeedback);
   });
 
   it('should provide answer to simple closure challenge', function() {
@@ -71,7 +71,7 @@ describe('User ', function() {
       };
     });
 
-    expect(feedback).not.toBe('Not quite try again.');
+    expect(feedback).not.toBe(errorFeedback);
   });
 
   it('should provide answer to context change challenge', function() {
@@ -82,17 +82,34 @@ describe('User ', function() {
 
     var feedback = Jasper.call(context, context);
 
-    expect(feedback).not.toBe('Not quite try again.');
+    expect(feedback).not.toBe(errorFeedback);
   });
 
-  it('should provide answer to prototype addition challenge', function() {
+  it('should provide answer to bound context function challenge', function() {
     jasper('skip', 7);
+
+    var f = function f() {
+      return this.bound;
+    }
+
+    var context = {
+      bound: 'bounded context function'
+    };
+
+    var boundedFunction = f.bind(context);
+    var feedback = jasper(boundedFunction);
+
+    expect(feedback).not.toBe(errorFeedback);
+  });
+  
+  it('should provide answer to prototype addition challenge', function() {
+    jasper('skip', 8);
 
     var feedback = jasper(function(object) {
       object.prototype.jasper = function() {};
     });
 
-    expect(feedback).not.toBe('Not quite try again.');
-  });
+    expect(feedback).not.toBe(errorFeedback);
+  });  
 
 });

@@ -84,6 +84,16 @@ Jasper("ask"
   });
 
 Jasper("ask"
+, "Write a context bounded property that should always return 'bounded context function' on bound property"
+, "Function contexts - calling your function with call() or apply() should not change the returned value"
+  , function (fn) {
+
+    var result = fn.apply({bound : 1});
+    
+    return result === 'bounded context function';
+  });
+
+Jasper("ask"
 , "Add a 'jasper' method to the prototype of the object passed to the function your write."
 , "Prototype chain - methods on the prototype of an object are available to all instances."
   , function (fn) {
@@ -95,6 +105,8 @@ Jasper("ask"
 
     return obj.jasper && /function/i.test({}.toString.call(obj.jasper)) && !obj.hasOwnProperty("jasper");
   });
+
+
 
 // Jasper("ask", "", function () {});
 

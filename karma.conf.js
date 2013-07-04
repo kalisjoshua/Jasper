@@ -7,6 +7,7 @@ basePath = '';
 files = [
   JASMINE,
   JASMINE_ADAPTER,
+  'polyfills/**/*.js',
   'jasper.engine.js',
   'jasper.asks.js',
   'test/jasmine/**/*.spec.js'
