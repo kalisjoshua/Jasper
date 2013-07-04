@@ -1,74 +1,100 @@
+/* jshint laxcomma:true */
 
-Jasper("ask", "Level 1: Call Jasper with one argument: 'start'.", 
-  "Level 1 was to open your console and initialize Jasper. GL! HF!", function (str) {
-  return "start" === str;
-});
+Jasper("ask"
+, "Call Jasper with one argument: 'start'."
+, "Executing functions - call the Jasper function passing a string.\n" +
+  "All of the exercises will require you to call the 'Jasper' function."
+  , function (str) {
+    return "start" === str;
+  });
 
-Jasper("ask", "Level 2: Pass in a function that returns true.", function (cb) {
-  return true === cb();
-});
+Jasper("ask"
+, "Pass in a function that returns true."
+, "Higher order functions - functions as arguments."
+  , function (cb) {
+    return true === cb();
+  });
 
-Jasper("ask", "Level 3: Provide an object with two properties: 'a' and 'b'.", function (obj) {
-  return ((void 0) !== obj.a && (void 0) !== obj.b);
-});
+Jasper("ask"
+, "Provide an object with two properties: 'a' and 'b'."
+, "Object Literals - create a simple object with two properties."
+  , function (obj) {
+    return ((void 0) !== obj.a && (void 0) !== obj.b);
+  });
 
-Jasper("ask", "Level 4: Pass a function that throws an error with message 'up'", function (fn) {
-  var message = 'up';
+Jasper("ask"
+, "Pass a function that throws an error with message 'up'"
+, "Errors - throw an actual Error object."
+  , function (fn) {
+    try {
+      fn();
+    } catch (e) {
+      return "up" === e.message && e instanceof Error;
+    }
 
-  try {
-    fn();
-  } catch (e) {
-    return message === e;
-  }
+    return false;
+  });
 
-  return false;
-});
+Jasper("ask"
+, "Send a JSON string that has a property 'do' with the value 'good'"
+, "Data interchange format - create a valid JSON string."
+  , function (json) {
+    return "good" === JSON.parse(json)["do"];
+  });
 
-Jasper("ask", "Level 5: Send a JSON string that has a property 'do' with the value 'good'", function (json) {
-  return "good" === JSON.parse(json)["do"];
-});
+Jasper("ask"
+, "Write a function to sum any number of number arguments."
+, "Use the 'arguments' object in a function like an array even though it's not."
+  , function (fn) {
+    var inputs
+      , sum = 0;
 
-Jasper("ask", "Level 6: Write a function to sum any number of number arguments.", function (fn) {
-  var inputs
-    , sum = 0;
+    // build a random length array with random values
+    inputs = Array
+      // random length array
+      .apply(null, Array(~~(Math.random() * 32)))
+      .map(function () {
+        // with random values
+        var num = ~~(Math.random() * 1024);
 
-  // build a random length array with random values
-  inputs = Array
-    // random length array
-    .apply(null, Array(~~(Math.random() * 32)))
-    .map(function () {
-      // with random values
-      var num = ~~(Math.random() * 1024);
+        // caching the sum to test the results
+        sum += num;
 
-      // caching the sum to test the results
-      sum += num;
+        return num;
+      });
 
-      return num;
-    });
+    return sum === fn.apply(null, inputs);
+  });
 
-  return sum === fn.apply(null, inputs);
-});
+Jasper("ask"
+, "Write a function that takes an argument and returns a function that returns that argument."
+, "Closures - use a closure to return a value scoped to a newly constructed function's scope."
+  , function (fn) {
+    return [42, "good stuff", /asdf/]
+      .reduce(function (acc, arg) {
+        return acc && fn(arg)() === arg;
+      }, true);
+  });
 
-Jasper("ask", "Level 7: Write a function that takes an argument and returns a function that returns that argument.", function (fn) {
-  return [42, "good stuff", /asdf/]
-    .reduce(function (acc, arg) {
-      return acc && fn(arg)() === arg;
-    }, true);
-});
+Jasper("ask"
+, "Execute Jasper with a context that matches its argument."
+, "Function contexts - the 'this' keyword is the context a function executes in."
+  , function (arg) {
+    return this == arg;
+  });
 
-Jasper("ask", "Level 8: Execute Jasper with a context that matches its argument.", function (arg) {
-  return this == arg;
-});
+Jasper("ask"
+, "Add a 'jasper' method to the prototype of the object passed to the function your write."
+, "Prototype chain - methods on the prototype of an object are available to all instances."
+  , function (fn) {
+    function F () {}
 
-Jasper("ask", "Level 9: Add a 'jasper' method to the prototype of the object passed to the function your write.", function (fn) {
-  function F () {}
+    var obj = new F();
 
-  var obj = new F();
+    fn(F);
 
-  fn(F);
-
-  return obj.jasper && /function/i.test({}.toString.call(obj.jasper)) && !obj.hasOwnProperty("jasper");
-});
+    return obj.jasper && /function/i.test({}.toString.call(obj.jasper)) && !obj.hasOwnProperty("jasper");
+  });
 
 // Jasper("ask", "", function () {});
 
