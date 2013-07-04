@@ -4,8 +4,8 @@ var Jasper = (function () {
   "use strict";
 
   var adjectives
-    , isFunction = isType.bind(null, "function")
-    , isString = isType.bind(null, "string")
+    , isFunction
+    , isString
     , levels = []
     , progress = 0
     , utils
@@ -15,6 +15,9 @@ var Jasper = (function () {
     return (new RegExp(type, "i"))
       .test({}.toString.call(obj));
   }
+
+  isFunction = isType.bind(null, "function");
+  isString = isType.bind(null, "string");
 
   adjectives = (function () {
     var length, words;
@@ -83,11 +86,13 @@ var Jasper = (function () {
     }
 
     , hint: function (prepend) {
-      console.log((prepend || "") + levels[progress].hint);
+      var result = (prepend || "") + levels[progress].hint;
 
       if (!prepend) {
-        return jasper_engine();
+        result += "\n" + jasper_engine();
       }
+
+      return result;
     }
 
     , lock: function () {

@@ -3,7 +3,7 @@ describe('User ', function() {
   'use strict';
 
   beforeEach(function() {
-    Jasper('start');    
+    Jasper('start');
   });
 
   afterEach(function() {
@@ -12,7 +12,7 @@ describe('User ', function() {
 
   it('should provide answer to initial question', function() {
     var feedback = Jasper(function() {
-      return true; 
+      return true;
     });
 
     expect(feedback).not.toBe('Not quite try again.');
@@ -21,7 +21,7 @@ describe('User ', function() {
   it('should provide answer to question 1', function() {
     Jasper('skip', 1);
     var feedback = Jasper({
-      a: 1, 
+      a: 1,
       b: 1
     });
 
@@ -31,7 +31,7 @@ describe('User ', function() {
   it('should provide answer to question 2', function() {
     Jasper('skip', 2);
     var feedback = Jasper(function() {
-      throw 'up';
+      throw new Error('up');
     });
 
     expect(feedback).not.toBe('Not quite try again.');
@@ -40,7 +40,7 @@ describe('User ', function() {
   it('should provide answer to question 3', function() {
     Jasper('skip', 3);
     var json = JSON.stringify({
-      do: 'good'
+      'do': 'good'
     });
     var feedback = Jasper(json);
 
@@ -66,8 +66,8 @@ describe('User ', function() {
     var feedback = Jasper(function(arg) {
       return function() {
         return arg;
-      }
-    });      
+      };
+    });
 
     expect(feedback).not.toBe('Not quite try again.');
   });
@@ -78,7 +78,7 @@ describe('User ', function() {
       a: 1
     };
 
-    var feedback = Jasper.call(context, context);      
+    var feedback = Jasper.call(context, context);
 
     expect(feedback).not.toBe('Not quite try again.');
   });
