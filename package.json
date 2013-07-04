@@ -1,4 +1,12 @@
 {
+  "name": "Jasper",
+  "version": "0.8.0",
+  "description": "A lightweight interactive assessment tool for JavaScript candidates.",
+  "homepage": "http://kalisjoshua.github.io/Jasper/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kalisjoshua/Jasper.git"
+  },
 	"devDependencies": {
   		"karma": "~0.8"
 	},
