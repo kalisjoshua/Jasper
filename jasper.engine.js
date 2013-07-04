@@ -16,8 +16,11 @@ var Jasper = (function () {
       .test({}.toString.call(obj));
   }
 
-  isFunction = isType.bind(null, "function");
-  isString = isType.bind(null, "string");
+  // PhantomJS does not like these :(
+  // isFunction = isType.bind(null, "function");
+  // isString = isType.bind(null, "string");
+  isFunction = function (obj) {return isType("function", obj);};
+  isString = function (obj) {return isType("string", obj);};
 
   adjectives = (function () {
     var length, words;
