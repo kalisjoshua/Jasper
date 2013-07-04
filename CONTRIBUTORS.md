@@ -1,4 +1,5 @@
+Contributors order alphabetically by lastname.
 
-  * Calvin Bushor
-  * Luke Camilleri
-  * Vivian Pennel
+  * [Calvin Bushor](https://github.com/calvinbushor)
+  * [Luke Camilleri](https://github.com/camilleriluke)
+  * [Vivian Pennel](https://github.com/Vp3n)
