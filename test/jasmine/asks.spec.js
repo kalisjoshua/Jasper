@@ -1,6 +1,7 @@
 describe('User ', function() {
   'use strict';
 
+  var errorFeedback = 'Not quite try again.';
   var jasper = Jasper;
 
   beforeEach(function() {
