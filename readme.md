@@ -11,6 +11,21 @@ I hope to add on to this library with some useful features:
   * Scoring with questions that have difficulty rankings
   * Intentional holes in security for hacking
 
+# How to contribute / build 
+
+Unit tests are executed by Karma with Jasmine framework.
+
+You will need NodeJS (at least 0.8) then you have 2 solutions :
+
+- Install Karma globally with 
+```
+npm install -g karma
+```
+
+then run with ```karma start```
+
+- Juste run ```npm install``` then ```npm test```  
+
 # License
 
 Licensed under the [WTFPL v2](http://www.wtfpl.net/). Specifically [LICENSE](LICENSE.md).
@@ -18,3 +33,5 @@ Licensed under the [WTFPL v2](http://www.wtfpl.net/). Specifically [LICENSE](LIC
 # Contributors
 
 [These people](CONTRIBUTORS.md) have been extremely helpful in building this project, very quickly.
+
+
