@@ -13,4 +13,8 @@ I hope to add on to this library with some useful features:
 
 # License
 
-Licensed under the [WTFPL v2](http://www.wtfpl.net/). Specifically [LICENSE](LICENSE).
+Licensed under the [WTFPL v2](http://www.wtfpl.net/). Specifically [LICENSE](LICENSE.md).
+
+# Contributors
+
+[These people](CONTRIBUTORS.md) have been extremely helpful in building this project, very quickly.
