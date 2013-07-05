@@ -8,9 +8,9 @@
     "url": "https://github.com/kalisjoshua/Jasper.git"
   },
 	"devDependencies": {
-  		"karma": "~0.8"
+    "karma": "~0.8"
 	},
 	"scripts": {
-	   "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS"
+    "test": "./node_modules/.bin/karma start --single-run --browsers PhantomJS"
 	}
 }
