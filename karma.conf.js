@@ -8,8 +8,8 @@ files = [
   JASMINE,
   JASMINE_ADAPTER,
   'jasper.engine.js',
-  'jasper.asks.js',  
-  'test/**/*.spec.js',
+  'jasper.asks.js',
+  'test/jasmine/**/*.spec.js'
 ];
 
 preprocessors = {
@@ -26,7 +26,7 @@ reporters = ['progress', 'coverage'];
 coverageReporter = {
   type : 'lcov',
   dir : 'coverage/'
-}
+};
 
 // web server port
 port = 8080;
@@ -42,7 +42,7 @@ colors = true;
 logLevel = LOG_INFO;
 
 // enable / disable watching file and executing tests whenever any file changes
-autoWatch = false;
+autoWatch = true;
 
 // Start these browsers, currently available:
 // - Chrome
