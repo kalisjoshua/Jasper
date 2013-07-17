@@ -331,7 +331,7 @@ var Jasper = (function () {
 
           progress++;
 
-          result += "\n\n" + API.help();
+          result += "\n\nNext Task: " + API.help();
         } else {
           result = "Not quite try again.";
         }
