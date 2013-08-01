@@ -123,7 +123,7 @@ var Jasper = (function () {
      *
      * @return undefined
      */
-    ask: function api_ask (intro, hint, fn) {
+    ask: function api_ask (intro, hint, fn, async) {
       if (!!lock) {
         throw new Error("Jasper has been locked, no new asks may be added.");
       }
@@ -131,6 +131,7 @@ var Jasper = (function () {
       var length = arguments.length;
 
       if (length > 0) {
+
         // Make second parameter optional
         if (2 === length) {
           fn = hint;
@@ -149,8 +150,16 @@ var Jasper = (function () {
           throw new Error("Challenge must be a Function.");
         }
 
+		    if('undefined'!==typeof async&&isNumber(async)!==true) {
+		        throw new Error("Async parameter must be a number.");
+		    }
+
+		    // Asks are synchronous by default
+		    async=async||0;
+
         fn.intro = intro;
         fn.hint = hint;
+        fn.async = async;
         levels.push(fn);
       } else {
         // no arguments passed
@@ -324,7 +333,29 @@ var Jasper = (function () {
     } else {
       try {
         // pass the arguments to the level function to check correctness
-        if (levels[progress].apply(this, arguments)) {
+        // asynchronous test
+        if (levels[progress].async) {
+        	result='[Asynchronous level] Waiting for the result...';
+        	var timeout=setTimeout(function() {
+        		console.log('Time is out ! Retry !');
+        		timeout=0;
+        	},levels[progress].async);
+        	var args=[].slice.call(arguments);
+        	args.unshift(function() {
+        		if(timeout) {
+	        		clearTimeout(timeout);
+				      answered[progress] = true;
+				      result = API.hint(adjectives() + "\nLevel " + (progress) + ": ");
+				      progress++;
+				      result += "\n\nNext Task: " + API.help();
+        		} else {
+        			result = "Ooops, you're a bit late, keep the good work ;).";
+        		}
+						console.log(result);
+        	});
+        	levels[progress].apply(this, args);
+        // synchronous test
+        } else if (levels[progress].apply(this, arguments)) {
           answered[progress] = true;
 
           result = API.hint(adjectives() + "\nLevel " + (progress) + ": ");

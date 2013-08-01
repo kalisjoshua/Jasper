@@ -96,6 +96,19 @@ Jasper("ask"
     return obj.jasper && /function/i.test({}.toString.call(obj.jasper)) && !obj.hasOwnProperty("jasper");
   });
 
+Jasper("ask"
+, "Pass in a function that execute the functions passed in argument aftyer 1s"
+, "Asynchronous execution + scopes."
+  , function (done, cb) {
+  	var execs=0;
+  	var fn=function() {
+  		++execs===3&&done();
+  	};
+  	cb(fn,fn,fn);
+    return null;
+  }
+  ,2000);
+
 // Jasper("ask", "", function () {});
 
 Jasper("ask"); // lock the list of asks
