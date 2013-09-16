@@ -84,7 +84,7 @@ Jasper("ask"
   });
 
 Jasper("ask"
-, "Add a 'jasper' method to the prototype of the object passed to the function your write."
+, "Add a 'jasper' method to the prototype of the object passed to the function you write."
 , "Prototype chain - methods on the prototype of an object are available to all instances."
   , function (fn) {
     function F () {}
