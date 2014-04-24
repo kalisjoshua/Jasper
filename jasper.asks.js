@@ -97,14 +97,17 @@ Jasper("ask"
   });
 
 Jasper("ask"
-, "Pass in a function that execute the functions passed in argument aftyer 1s"
+, "Pass in a function that will execute the functions passed in as arguments after 1s"
 , "Asynchronous execution + scopes."
   , function (done, cb) {
-  	var execs=0;
-  	var fn=function() {
-  		++execs===3&&done();
-  	};
-  	cb(fn,fn,fn);
+  	var execs = 0;
+
+    function fn() {
+  		++execs === 3 && done();
+  	}
+
+  	cb(fn, fn, fn);
+
     return null;
   }
   ,2000);
