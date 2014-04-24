@@ -94,4 +94,14 @@ describe('User ', function() {
     expect(feedback).not.toBe('Not quite try again.');
   });
 
+  it('should provide answer to async challenge', function() {
+    jasper('skip', 8);
+
+    var feedback = jasper(function(object) {
+      object.prototype.jasper = function() {};
+    });
+
+    expect(feedback).not.toBe('Not quite try again.');
+  });
+
 });

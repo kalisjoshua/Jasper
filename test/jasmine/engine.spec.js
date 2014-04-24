@@ -5,6 +5,7 @@ describe("Jasper engine", function() {
     , ENDMSG = "\nCongratulations you're done; start over with Jasper('restart')."
     , NOTQUITE = "Not quite try again."
     , TESTFN = function () {return true;}
+    , TESTASYNCFN = function (done) { setTimeout(done,1000); }
     , TESTING = "TESTING!";
 
   function addTestingAsk (str) {
@@ -96,6 +97,20 @@ describe("Jasper engine", function() {
         jasper("ask"
           , "1234"
           , 1234);
+
+      }).toThrow();
+    });
+
+    it("should throw an error if a bad async timeout is given", function() {
+      expect(function () {
+
+        jasper("ask"
+          , "1234"
+          , 1234
+          , function () {
+            return true;
+          }
+          , "");
 
       }).toThrow();
     });
@@ -337,6 +352,43 @@ describe("Jasper engine", function() {
 
     expect(result).toMatch(/\nLevel\s+\d+:\s+/);
     expect(result).toMatch(/Congratulations/);
+
+  });
+
+  it("should tell when tests are asynchronous", function() {
+
+    jasper("ask", "Sample ask 1", "Do anything but call an API method.", TESTASYNCFN, 500);
+
+    var result = jasper('test');
+
+    expect(result).toBe("[Asynchronous level] Waiting for the result...");
+
+  });
+
+  it("should timeout when tests are asynchronous and filled too late", function(done) {
+
+    jasper("ask", "Sample ask 2", "Do anything but call an API method.", TESTASYNCFN, 1500);
+
+    jasper('test');
+
+		setTimeout(function() {
+			var result = jasper();
+    	expect(result).toBe("Sample ask 2");
+		},1501);
+
+  });
+
+  it("should work when tests are asynchronous and filled in time", function(done) {
+
+    jasper("ask", "Sample ask 1", "Do anything but call an API method.", TESTASYNCFN, 1500);
+    jasper("ask", "Sample ask 2", "Do anything but call an API method.", TESTFN);
+
+    jasper('test');
+
+		setTimeout(function() {
+			var result = jasper();
+    	expect(result).toBe("Sample ask 2");
+		},1501);
 
   });
 
