@@ -7,10 +7,13 @@
     "type": "git",
     "url": "https://github.com/kalisjoshua/Jasper.git"
   },
-	"devDependencies": {
-    "karma": "~0.8"
-	},
-	"scripts": {
-    "test": "karma start --single-run --browsers PhantomJS"
-	}
+  "devDependencies": {
+    "@babel/core": "^7.22.5",
+    "@babel/preset-env": "^7.22.5",
+    "babel-jest": "^29.5.0",
+    "jest": "^29.5.0"
+  },
+  "scripts": {
+    "test": "jest"
+  }
 }
