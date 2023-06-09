@@ -6,10 +6,10 @@ Jasper provides an API, and engine, to cycle through challenges that will hopefu
 
 I hope to add on to this library with some useful features:
 
-  * Tracking correct / incorrect answers and reporting to a backend
-  * When complete, providing a hash ID for submission with resumes
-  * Scoring with questions that have difficulty rankings
-  * Intentional holes in security for hacking
+* Tracking correct / incorrect answers and reporting to a backend
+* When complete, providing a hash ID for submission with resumes
+* Scoring with questions that have difficulty rankings
+* Intentional holes in security for hacking
 
 # How to contribute / build 
 

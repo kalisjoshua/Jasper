@@ -3,32 +3,23 @@
 var Jasper = (function () {
   "use strict";
 
-  var adjectives
-
+  var adjectives,
     // indicators of success in answering the ask
-    , answered = []
-
-    , API
-
+    answered = [],
+    API,
     // attic will hold versions of the levels array that have been emptied
-    , attic = []
-
+    attic = [],
     // check isType description for more details about these functions
     // , isFunction = isType.bind(null, "function") // Phantom hates bind? :(
     // , isString = isType.bind(null, "string")     // Phantom hates bind? :(
-    , isFunction = apply_one(isType, "function") // taking advantage of hoisting
-    , isString = apply_one(isType, "string")     // taking advantage of hoisting
-
+    isFunction = apply_one(isType, "function"), // taking advantage of hoisting
+    isString = apply_one(isType, "string"), // taking advantage of hoisting
     // levels will hold all asks given to Jasper
-    , levels = []
-
+    levels = [],
     // lock indicates if asks can be added or not
-    , lock = false
-
+    lock = false,
     // progress is the current position of the user within the levels array
-    , progress = 0
-    ;
-
+    progress = 0;
   // Phantom hates Function.prototype.bind :(
   /**
    * Apply the first argument of a function
@@ -41,10 +32,10 @@ var Jasper = (function () {
    *
    * @return {true|false}
    */
-  function apply_one (fn, type) {
+  function apply_one(fn, type) {
     return function (obj) {
-        return fn(type, obj);
-      };
+      return fn(type, obj);
+    };
   }
 
   /**
@@ -55,7 +46,7 @@ var Jasper = (function () {
    * @return {Boolean}
    *
    */
-  function isNumber (n) {
+  function isNumber(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
   }
 
@@ -70,9 +61,8 @@ var Jasper = (function () {
    *
    * @return {Boolean}
    */
-  function isType (type, obj) {
-    return (new RegExp(type, "i"))
-      .test({}.toString.call(obj));
+  function isType(type, obj) {
+    return new RegExp(type, "i").test({}.toString.call(obj));
   }
 
   /**
@@ -83,25 +73,23 @@ var Jasper = (function () {
   adjectives = (function () {
     var length, words;
 
-    words = ("Admirable Awesome Brilliant Capital Excellent Fabulous " +
+    words = (
+      "Admirable Awesome Brilliant Capital Excellent Fabulous " +
       "Fantabulous Glorious Good Great Impressive Keen Magnificent " +
       "Outstanding Resplendent Splendid Splendiferous Superb Superior " +
-      "Swanky")
-      .split(" ");
+      "Swanky"
+    ).split(" ");
 
     length = words.length;
 
     return function () {
       var indx = ~~(Math.random() * length) % length;
 
-      words = words
-        .slice(indx)
-        .concat(words.slice(0, indx));
+      words = words.slice(indx).concat(words.slice(0, indx));
 
-      return ("%" + ["!", "."][~~(Math.random() * 2)])
-        .replace("%", words[0]);
+      return ("%" + ["!", "."][~~(Math.random() * 2)]).replace("%", words[0]);
     };
-  }());
+  })();
 
   /**
    * Namespace for the API allowing for lookup in jasper_engine
@@ -123,7 +111,7 @@ var Jasper = (function () {
      *
      * @return undefined
      */
-    ask: function api_ask (intro, hint, fn, async) {
+    ask: function api_ask(intro, hint, fn, async) {
       if (!!lock) {
         throw new Error("Jasper has been locked, no new asks may be added.");
       }
@@ -131,7 +119,6 @@ var Jasper = (function () {
       var length = arguments.length;
 
       if (length > 0) {
-
         // Make second parameter optional
         if (2 === length) {
           fn = hint;
@@ -150,12 +137,12 @@ var Jasper = (function () {
           throw new Error("Challenge must be a Function.");
         }
 
-		    if('undefined'!==typeof async&&isNumber(async)!==true) {
-		        throw new Error("Async parameter must be a number.");
-		    }
+        if ("undefined" !== typeof async && isNumber(async) !== true) {
+          throw new Error("Async parameter must be a number.");
+        }
 
-		    // Asks are synchronous by default
-		    async=async||0;
+        // Asks are synchronous by default
+        async = async || 0;
 
         fn.intro = intro;
         fn.hint = hint;
@@ -166,7 +153,7 @@ var Jasper = (function () {
         // lock the implementation so no more asks can be added
         lock = true;
       }
-    }
+    },
 
     /**
      * Remove all asks to start from scratch
@@ -180,7 +167,7 @@ var Jasper = (function () {
      *
      * @return undefined
      */
-    , empty: function api_empty (arg, atticToo) {
+    empty: function api_empty(arg, atticToo) {
       if (true === arg) {
         if (levels.length && !atticToo) {
           attic.push(levels);
@@ -196,7 +183,7 @@ var Jasper = (function () {
       } else {
         throw new Error("Empty must be passed first_argument === 'true'.");
       }
-    }
+    },
 
     // , extras: function () {
     //   // global variables: help, start, hint, jasper
@@ -209,13 +196,11 @@ var Jasper = (function () {
      * @return {String}
      *         The intro text of the current level, or the end text
      */
-    , help: function api_help (prepend) {
+    help: function api_help(prepend) {
       return progress < levels.length && false !== answered[progress]
-        ? levels[progress]
-          .intro
-          .replace("#", 1 + progress)
+        ? levels[progress].intro.replace("#", 1 + progress)
         : "\nCongratulations you're done; start over with Jasper('restart').";
-    }
+    },
 
     /**
      * Show the current level's hint text
@@ -226,11 +211,13 @@ var Jasper = (function () {
      * @return {String}
      *         The resulting string to be output
      */
-    , hint: function api_hint (prepend) {
-      return (prepend || "") +
+    hint: function api_hint(prepend) {
+      return (
+        (prepend || "") +
         levels[progress].hint +
-        (prepend ? "\n" + API.help() : "");
-    }
+        (prepend ? "\n" + API.help() : "")
+      );
+    },
 
     /**
      * Start the asks/challenges over again
@@ -238,11 +225,11 @@ var Jasper = (function () {
      * @return {String}
      *         Message telling the user they are ready to go again
      */
-    , restart: function api_restart () {
+    restart: function api_restart() {
       answered = [];
       progress = 0;
       return "All clear; go for it!\n" + API.help();
-    }
+    },
 
     /**
      * Restore previously emptied asks
@@ -253,7 +240,7 @@ var Jasper = (function () {
      *
      * @return undefined
      */
-    , restore: function api_restore (arg) {
+    restore: function api_restore(arg) {
       if (true === arg) {
         if (attic.length) {
           levels = attic.pop();
@@ -265,7 +252,7 @@ var Jasper = (function () {
       } else {
         throw new Error("Restore must be passed first_argument === 'true'.");
       }
-    }
+    },
 
     /**
      * Skip to an ask/challenge without completing the current on
@@ -277,13 +264,15 @@ var Jasper = (function () {
      * @return {String}
      *         The help text for the next ask/challenge
      */
-    , skip: function api_skip (search) {
+    skip: function api_skip(search) {
       var len;
 
       if (void 0 === search || isNumber(search)) {
         if (0 === +search) {
-          throw new Error("Why would you want to skip to where you are? " +
-            "Zero passed to Jasper('skip').");
+          throw new Error(
+            "Why would you want to skip to where you are? " +
+              "Zero passed to Jasper('skip').",
+          );
         }
 
         // default to 'skipping' one ask forward
@@ -295,13 +284,14 @@ var Jasper = (function () {
         // make sure to skip in bounds
         progress = (progress + ~~search) % levels.length;
       } else {
-        throw new Error("Skip needs a number to skip to, " +
-          "or a string to search for; '%' doesn't work."
-          .replace("%", search));
+        throw new Error(
+          "Skip needs a number to skip to, " +
+            "or a string to search for; '%' doesn't work.".replace("%", search),
+        );
       }
 
       return API.help();
-    }
+    },
   };
 
   /** Command Pattern - Manager
@@ -317,7 +307,7 @@ var Jasper = (function () {
    *         Prompt for the user to take next steps
    *
    */
-  function jasper_engine (command, arg) {
+  function jasper_engine(command, arg) {
     /*jshint validthis:true*/
     var result;
 
@@ -327,38 +317,39 @@ var Jasper = (function () {
     // run a util method if asked for or no arguments
     if (API[command] || 0 === arguments.length) {
       // only pass the arguments if provided; zero is a valid argument sometimes
-      result = (arg || 0 === arg)
-        ? API[command].apply(this, [].slice.call(arguments, 1))
-        : API[command].call(this);
+      result =
+        arg || 0 === arg
+          ? API[command].apply(this, [].slice.call(arguments, 1))
+          : API[command].call(this);
     } else {
       try {
         // pass the arguments to the level function to check correctness
         // asynchronous test
         if (levels[progress].async) {
-        	result='[Asynchronous level] Waiting for the result...';
-        	var timeout=setTimeout(function() {
-        		console.log('Time is out ! Retry !');
-        		timeout=0;
-        	},levels[progress].async);
-        	var args=[].slice.call(arguments);
-        	args.unshift(function() {
-        		if(timeout) {
-	        		clearTimeout(timeout);
-				      answered[progress] = true;
-				      result = API.hint(adjectives() + "\nLevel " + (progress) + ": ");
-				      progress++;
-				      result += "\n\nNext Task: " + API.help();
-        		} else {
-        			result = "Ooops, you're a bit late, keep the good work ;).";
-        		}
-						console.log(result);
-        	});
-        	levels[progress].apply(this, args);
-        // synchronous test
+          result = "[Asynchronous level] Waiting for the result...";
+          var timeout = setTimeout(function () {
+            console.log("Time is out ! Retry !");
+            timeout = 0;
+          }, levels[progress].async);
+          var args = [].slice.call(arguments);
+          args.unshift(function () {
+            if (timeout) {
+              clearTimeout(timeout);
+              answered[progress] = true;
+              result = API.hint(adjectives() + "\nLevel " + progress + ": ");
+              progress++;
+              result += "\n\nNext Task: " + API.help();
+            } else {
+              result = "Ooops, you're a bit late, keep the good work ;).";
+            }
+            console.log(result);
+          });
+          levels[progress].apply(this, args);
+          // synchronous test
         } else if (levels[progress].apply(this, arguments)) {
           answered[progress] = true;
 
-          result = API.hint(adjectives() + "\nLevel " + (progress) + ": ");
+          result = API.hint(adjectives() + "\nLevel " + progress + ": ");
 
           progress++;
 
@@ -384,14 +375,16 @@ var Jasper = (function () {
 
   // hints to help people find the path to enlightenment
   jasper_engine.help =
-  jasper_engine.start =
-  jasper_engine.toString =
-  function () {
-    return jasper_engine();
-  };
+    jasper_engine.start =
+    jasper_engine.toString =
+      function () {
+        return jasper_engine();
+      };
 
-  console.log("Level 0: Completed by opening your browser's console.\n" +
-    "'Jasper' is waiting for 'start'. GL! HF!");
+  console.log(
+    "Level 0: Completed by opening your browser's console.\n" +
+      "'Jasper' is waiting for 'start'. GL! HF!",
+  );
 
   return jasper_engine;
-}());
+})();
