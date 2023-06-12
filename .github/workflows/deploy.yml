@@ -1,6 +1,9 @@
 # Simple workflow for deploying static content to GitHub Pages
 name: Deploy static content to Pages
 
+env:
+  STATIC_CONTENT_DIR: static-content
+
 on:
   # Runs on pushes targeting the default branch
   push:
@@ -33,15 +36,22 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      
       - name: Setup Pages
         uses: actions/configure-pages@v3
+      
+      - name: Create content folder
+        run: mkdir $STATIC_CONTENT_DIR
+      
+      - name: Move content into folder
+        run: mv index.html jasper.engine.mjs jasper.asks.mjs $STATIC_CONTENT_DIR
+      
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
           # Upload entire repository
-          path: 'index.html'
-          path: 'jasper.asks.mjs'
-          path: 'jasper.engine.mjs'
+          path: $STATIC_CONTENT_DIR
+      
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
