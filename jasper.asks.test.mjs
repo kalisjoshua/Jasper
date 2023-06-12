@@ -1,5 +1,7 @@
-import { Jasper } from "./jasper.engine";
-import { init } from "./jasper.asks.js";
+import { Jasper } from "./jasper.engine.mjs";
+import { init } from "./jasper.asks.mjs";
+
+jest.spyOn(console, "log").mockImplementation(() => {});
 
 describe("User ", function () {
   init(Jasper);

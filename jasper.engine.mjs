@@ -66,28 +66,40 @@ function isType(type, obj) {
  * @return {String}
  */
 adjectives = (function () {
-  var length, words;
-
-  words = (
-    "Admirable Awesome Brilliant Capital Excellent Fabulous " +
-    "Fantabulous Glorious Good Great Impressive Keen Magnificent " +
-    "Outstanding Resplendent Splendid Splendiferous Superb Superior " +
-    "Swanky"
-  ).split(" ");
-
-  length = words.length;
+  let words = [
+    "Admirable",
+    "Awesome",
+    "Brilliant",
+    "Capital",
+    "Excellent",
+    "Fabulous",
+    "Fantabulous",
+    "Glorious",
+    "Good",
+    "Great",
+    "Impressive",
+    "Keen",
+    "Magnificent",
+    "Outstanding",
+    "Resplendent",
+    "Splendid",
+    "Splendiferous",
+    "Superb",
+    "Superior",
+    "Swanky",
+  ];
 
   return function () {
-    var indx = ~~(Math.random() * length) % length;
+    const selected = ~~(Math.random() * words.length) % words.length;
 
-    words = words.slice(indx).concat(words.slice(0, indx));
+    words = words.slice(selected).concat(words.slice(0, selected));
 
     return ("%" + ["!", "."][~~(Math.random() * 2)]).replace("%", words[0]);
   };
 })();
 
 /**
- * Namespace for the API allowing for lookup in jasper_engine
+ * Namespace for the API allowing for lookup in Jasper
  *
  * @type {Object}
  */
@@ -302,7 +314,7 @@ API = {
  *         Prompt for the user to take next steps
  *
  */
-function jasper_engine(command, arg) {
+function Jasper(command, arg) {
   /*jshint validthis:true*/
   var result;
 
@@ -365,18 +377,10 @@ function jasper_engine(command, arg) {
     }
   }
 
-  return (result || "")
-    .split("\n")
-    .filter(Boolean)
-    .forEach((s) => console.log(s));
+  return result;
 }
 
 // hints to help people find the path to enlightenment
-jasper_engine.help =
-  jasper_engine.start =
-  jasper_engine.toString =
-    function () {
-      return jasper_engine();
-    };
+Jasper.help = Jasper.start = Jasper.toString = () => Jasper();
 
-export { jasper_engine as Jasper };
+export { Jasper };

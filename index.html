@@ -121,13 +121,13 @@
   </div>
 
   <script type="module">
-    import { Jasper } from "./jasper.engine.js"
-    import { init } from "./jasper.asks.js"
+    import { Jasper } from "./jasper.engine.mjs"
+    import { init } from "./jasper.asks.mjs"
 
     init(Jasper)
 
-    window.Jasper = Jasper
-
+    window.Jasper = (...args) => console.log(Jasper(...args))
+      
     console.log(
       "Level 0: Completed by opening your browser's console.\n" +
         "'Jasper' is waiting for 'start'. GL! HF!",

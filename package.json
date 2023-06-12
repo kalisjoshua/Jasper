@@ -1,6 +1,6 @@
 {
-  "name": "Jasper",
-  "version": "0.8.0",
+  "name": "jasper",
+  "version": "1.0.0",
   "description": "A lightweight interactive assessment tool for JavaScript candidates.",
   "homepage": "http://kalisjoshua.github.io/Jasper/",
   "repository": {
@@ -11,9 +11,11 @@
     "@babel/core": "^7.22.5",
     "@babel/preset-env": "^7.22.5",
     "babel-jest": "^29.5.0",
+    "http-server": "^14.1.1",
     "jest": "^29.5.0"
   },
   "scripts": {
-    "test": "jest"
+    "start": "http-server .",
+    "test": "jest --config=jest.config.js"
   }
 }

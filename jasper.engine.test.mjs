@@ -1,8 +1,10 @@
-import { Jasper } from "./jasper.engine.js";
+import { Jasper } from "./jasper.engine.mjs";
+
+jest.spyOn(console, "log").mockImplementation(() => {});
 
 describe("Jasper engine", () => {
   const ENDMSG =
-    "\nCongratulations you're done; start over with Jasper('restart').";
+    "\n Congratulations you're done; start over with Jasper('restart').";
   const NOTQUITE = "Not quite try again.";
   const TESTFN = () => true;
   const TESTING = "TESTING!";
@@ -12,26 +14,26 @@ describe("Jasper engine", () => {
   }
 
   function addTestingAsk(str) {
-    jasper("ask", str, "help " + str, TESTFN);
+    Jasper("ask", str, "help " + str, TESTFN);
   }
 
   afterEach(function () {
-    jasper("restart");
+    Jasper("restart");
   });
 
   beforeEach(function () {
-    jasper("empty", true);
+    Jasper("empty", true);
   });
 
   describe("Jasper()", function () {
     it("should show end message text (ENDMSG) if no asks and empty call", function () {
-      expect(jasper()).toBe(ENDMSG);
+      expect(Jasper()).toBe(ENDMSG);
     });
 
     it("should show TESTING text if TESTING task and empty call", function () {
       addTestingAsk(TESTING);
-      expect(jasper()).toBe(TESTING);
-      expect(jasper()).not.toBe(ENDMSG);
+      expect(Jasper()).toBe(TESTING);
+      expect(Jasper()).not.toBe(ENDMSG);
     });
   });
 
@@ -45,20 +47,20 @@ describe("Jasper engine", () => {
     });
 
     it("should accept asks without optional argument(s)", function () {
-      expect(jasper()).toBe(ENDMSG);
+      expect(Jasper()).toBe(ENDMSG);
 
-      jasper("ask", NOHELP, TESTFN);
+      Jasper("ask", NOHELP, TESTFN);
 
-      expect(jasper("help")).toBe(NOHELP);
+      expect(Jasper("help")).toBe(NOHELP);
     });
 
     it("should throw an error if locked and ask added", function () {
       // lock the Jasper asks
-      jasper("ask");
+      Jasper("ask");
 
       expect(function () {
         // try and add a new ask
-        jasper("ask", NOHELP, function () {
+        Jasper("ask", NOHELP, function () {
           return true;
         });
       }).toThrow();
@@ -66,7 +68,7 @@ describe("Jasper engine", () => {
 
     it("should throw an error if a bad intro is given", function () {
       expect(function () {
-        jasper("ask", 1234, function () {
+        Jasper("ask", 1234, function () {
           return true;
         });
       }).toThrow();
@@ -74,7 +76,7 @@ describe("Jasper engine", () => {
 
     it("should throw an error if a bad hint is given", function () {
       expect(function () {
-        jasper("ask", "1234", 1234, function () {
+        Jasper("ask", "1234", 1234, function () {
           return true;
         });
       }).toThrow();
@@ -82,13 +84,13 @@ describe("Jasper engine", () => {
 
     it("should throw an error if a bad execution function is given", function () {
       expect(function () {
-        jasper("ask", "1234", 1234);
+        Jasper("ask", "1234", 1234);
       }).toThrow();
     });
 
     it("should throw an error if a bad async timeout is given", function () {
       expect(function () {
-        jasper(
+        Jasper(
           "ask",
           "1234",
           1234,
@@ -105,38 +107,38 @@ describe("Jasper engine", () => {
     it("should throw an error if true is not passed", function () {
       expect(function () {
         // no true value passed
-        jasper("empty");
+        Jasper("empty");
       }).toThrow();
 
       expect(function () {
         // truthy values don't count
-        jasper("empty", "true");
+        Jasper("empty", "true");
       }).toThrow();
 
       expect(function () {
         // truthy values don't count
-        jasper("empty", 1);
+        Jasper("empty", 1);
       }).toThrow();
     });
   });
 
   describe("Jasper('help')", function () {
     it("should show end message text (ENDMSG) if no asks", function () {
-      expect(jasper("help")).toBe(ENDMSG);
+      expect(Jasper("help")).toBe(ENDMSG);
     });
 
     it("should return 'introductory text'", function () {
       var introText = "introductory text";
 
-      jasper("ask", introText, TESTFN);
+      Jasper("ask", introText, TESTFN);
 
-      expect(jasper("help")).toBe(introText);
+      expect(Jasper("help")).toBe(introText);
     });
 
     it("should show end message text (ENDMSG) if no asks - using help aliases", function () {
       // expect(jasper.help).toBe(ENDMSG); // Jasmine doesn't do this :(
       // expect(jasper.start).toBe(ENDMSG); // Jasmine doesn't do this :(
-      expect(jasper.toString()).toBe(ENDMSG);
+      expect(Jasper.toString()).toBe(ENDMSG);
     });
   });
 
@@ -145,27 +147,27 @@ describe("Jasper engine", () => {
       var hint = "hint hint, nudge nudge",
         intro = "introductory text";
 
-      jasper("ask", intro, hint, TESTFN);
+      Jasper("ask", intro, hint, TESTFN);
 
-      expect(jasper("hint")).toBe(hint);
+      expect(Jasper("hint")).toBe(hint);
     });
 
-    it("should return 'hint hint, nudge nudge\\nintroductory text' - NO prepended value", function () {
+    it("should return 'hint hint, nudge nudge\\nintroductory text' - prepended value", function () {
       var hint = "hint hint, nudge nudge",
         intro = "introductory text",
         prepend = "Hot Dog! ";
 
-      jasper("ask", intro + 1, hint, TESTFN);
-      jasper("ask", intro + 2, hint, TESTFN);
+      Jasper("ask", intro + 1, hint, TESTFN);
+      Jasper("ask", intro + 2, hint, TESTFN);
 
-      expect(jasper("hint", prepend)).toBe(prepend + hint + "\n" + intro + 2);
+      expect(Jasper("hint", prepend)).toBe(prepend + hint + "\n " + intro + 2);
     });
   });
 
   describe("Jasper('restart')", function () {
     it("should show 'All clear; go again?'", function () {
-      expect(jasper("restart")).toBe(
-        "All clear; go for it!\n" + jasper("help"),
+      expect(Jasper("restart")).toBe(
+        "All clear; go for it!\n " + Jasper("help"),
       );
     });
   });
@@ -174,43 +176,43 @@ describe("Jasper engine", () => {
     it("should throw an error when called without true argument", function () {
       var intro = "Scooby Doo";
 
-      jasper("ask", intro, TESTFN);
+      Jasper("ask", intro, TESTFN);
 
-      jasper("empty", true);
+      Jasper("empty", true);
 
       expect(function () {
-        jasper("restore");
+        Jasper("restore");
       }).toThrow();
     });
 
     it("should throw an error when there is no history to restore", function () {
-      jasper("empty", true, true);
+      Jasper("empty", true, true);
 
       expect(function () {
-        jasper("restore", true);
+        Jasper("restore", true);
       }).toThrow();
     });
 
     it("should restore emptied asks", function () {
       var intro = "intro";
 
-      jasper("ask", intro, TESTFN);
+      Jasper("ask", intro, TESTFN);
 
-      jasper("empty", true);
+      Jasper("empty", true);
 
-      expect(jasper("restore", true)).toBe("All clear; go for it!\n" + intro);
+      expect(Jasper("restore", true)).toBe("All clear; go for it!\n " + intro);
     });
   });
 
   describe("Jasper('skip')", function () {
     it("should show end message text (ENDMSG) if no asks at all", function () {
-      expect(jasper("skip")).toBe(ENDMSG);
+      expect(Jasper("skip")).toBe(ENDMSG);
     });
 
     it("should show end message text (ENDMSG) if only ask complete", function () {
       addTestingAsk(TESTING);
 
-      expect(jasper("skip")).toBe(ENDMSG);
+      expect(Jasper("skip")).toBe(ENDMSG);
     });
 
     it("should show end message text (ENDMSG) if all asks complete", function () {
@@ -218,98 +220,98 @@ describe("Jasper engine", () => {
       addTestingAsk(TESTING);
       addTestingAsk(TESTING);
 
-      jasper("skip");
-      jasper("skip");
-      jasper("skip");
+      Jasper("skip");
+      Jasper("skip");
+      Jasper("skip");
 
-      expect(jasper("help")).toBe(ENDMSG);
+      expect(Jasper("help")).toBe(ENDMSG);
     });
 
     it("should throw an error when called with non-index argument", function () {
       expect(function () {
-        jasper("skip", "a");
+        Jasper("skip", "a");
       }).toThrow();
 
       expect(function () {
-        jasper("skip", { toString: "" });
+        Jasper("skip", { toString: "" });
       }).toThrow();
     });
 
     it("should throw an error when called to skip zero", function () {
       expect(function () {
-        jasper("skip", 0); // SyntaxError: Parse error
+        Jasper("skip", 0); // SyntaxError: Parse error
       }).toThrow();
     });
   });
 
   it("should tell when answer is wrong", function () {
-    jasper("ask", TESTING, function () {
+    Jasper("ask", TESTING, function () {
       return false;
     });
 
-    expect(jasper("My answer is...")).toBe(NOTQUITE);
+    expect(Jasper("My answer is...")).toBe(NOTQUITE);
   });
 
   it("should throw an error when attempting to call a non-function as a function", function () {
-    jasper("ask", TESTING, function (fn) {
+    Jasper("ask", TESTING, function (fn) {
       return fn();
     });
 
     expect(function () {
-      jasper("My answer is...");
+      Jasper("My answer is...");
     }).toThrow();
   });
 
   it("should throw an error when attempting to parse invalid JSON", function () {
-    jasper("ask", TESTING, function (str) {
+    Jasper("ask", TESTING, function (str) {
       return JSON.parse(str);
     });
 
     expect(function () {
-      jasper("My answer is...");
+      Jasper("My answer is...");
     }).toThrow();
   });
 
   it("should log a helpful error when an unknown error happens", function () {
-    jasper("ask", TESTING, function (str) {
+    Jasper("ask", TESTING, function (str) {
       throw new Error("Boobaloo!");
     });
 
     expect(function () {
-      jasper("My answer is...");
+      Jasper("My answer is...");
     }).toThrow();
   });
 
   it("should show congratulatory adjective and level number when answered correctly", function () {
-    jasper(
+    Jasper(
       "ask",
       "Sample ask 1",
       "Do anything but call an API method.",
       TESTFN,
     );
-    jasper(
+    Jasper(
       "ask",
       "Sample ask 2",
       "Do anything but call an API method.",
       TESTFN,
     );
 
-    var result = jasper(/regex is fun/);
+    var result = Jasper(/regex is fun/);
 
     expect(result).not.toBe("Sample ask 2");
 
-    expect(result).toMatch(/\nLevel\s+\d+:\s+/);
+    expect(result).toMatch(/Level\s+\d+:\s+/);
 
-    result = jasper("Finish him.");
+    result = Jasper("Finish him.");
 
     expect(result).not.toBe("Sample ask 2");
 
-    expect(result).toMatch(/\nLevel\s+\d+:\s+/);
+    expect(result).toMatch(/Level\s+\d+:\s+/);
     expect(result).toMatch(/Congratulations/);
   });
 
   it.skip("should tell when tests are asynchronous", function () {
-    jasper(
+    Jasper(
       "ask",
       "Sample ask 1",
       "Do anything but call an API method.",
@@ -317,13 +319,13 @@ describe("Jasper engine", () => {
       500,
     );
 
-    var result = jasper("test");
+    var result = Jasper("test");
 
     expect(result).toBe("[Asynchronous level] Waiting for the result...");
   });
 
   it.skip("should timeout when tests are asynchronous and filled too late", function (done) {
-    jasper(
+    Jasper(
       "ask",
       "Sample ask 2",
       "Do anything but call an API method.",
@@ -331,40 +333,40 @@ describe("Jasper engine", () => {
       1500,
     );
 
-    jasper("test");
+    Jasper("test");
 
     setTimeout(function () {
-      var result = jasper();
+      var result = Jasper();
       expect(result).toBe("Sample ask 2");
     }, 1501);
   });
 
   it.skip("should work when tests are asynchronous and filled in time", function (done) {
-    jasper(
+    Jasper(
       "ask",
       "Sample ask 1",
       "Do anything but call an API method.",
       TESTASYNCFN,
       1500,
     );
-    jasper(
+    Jasper(
       "ask",
       "Sample ask 2",
       "Do anything but call an API method.",
       TESTFN,
     );
 
-    jasper("test");
+    Jasper("test");
 
     setTimeout(function () {
-      var result = jasper();
+      var result = Jasper();
       expect(result).toBe("Sample ask 2");
     }, 1501);
   });
 
   // it('should go to before last question if skip is negative', function() {
-  //   var feedBack = jasper('skip', -10);
+  //   var feedBack = Jasper('skip', -10);
   //   expect(feedBack).toBe("Add a 'jasper' method to the prototype of the object passed to the function your write.");
   // });
+  // */
 });
-// /* */
