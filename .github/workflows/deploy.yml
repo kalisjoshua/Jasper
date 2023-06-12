@@ -33,39 +33,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v2.5.2
-        with:
-          # Version Spec of the version to use. Examples:
-          #   12.x
-          #   10.15.1
-          #   >=10.15.0
-          node-version: 18.x
-          # Used to specify the path to a dependency file:
-          #   package-lock.json
-          #   yarn.lock
-          #   etc.
-          # Supports wildcards or a list of file names for caching multiple
-          # dependencies.
-          cache-dependency-path: package-lock.json
-      - name: Install Dependencies
-        # You may pin to the exact commit or the version.
-        # uses: bahmutov/npm-install@44b9e76df0949f3df6616b334af42e055ce24831
-        uses: bahmutov/npm-install@v1.6.0
-        with:
-          # Custom install command to use
-          install-command: npm ci
-      - name: Run Jest
-        # You may pin to the exact commit or the version.
-        # uses: stefanoeb/jest-action@f9bb23f509cde20ee9b494f0496d1d3323861cc4
-        uses: stefanoeb/jest-action@1.0.4
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
           # Upload entire repository
-          path: '.'
+          path: 'index.html'
+          path: 'jasper.asks.mjs'
+          path: 'jasper.engine.mjs'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
