@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg
+    version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    x="0px"
+    y="0px"
+    viewBox="0 0 12 12"
+    style="enable-background:new 0 0 12 12;"
+    xml:space="preserve">
+  <style>
+  	path { fill: #000000; }
+    svg { background: #FFFFFF; }
+  	@media (prefers-color-scheme: dark) {
+  		path { fill: #FFFFFF; }
+      svg { background: #000000; }
+  	}
+  </style>
+  <path d="M12,12H0V0h12V12z M6,1H1v10l5-5V1z M11,1L6,6l5,5V1z" />
+</svg>
