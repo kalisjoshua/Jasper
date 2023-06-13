@@ -1,3 +1,9 @@
+// TODO: add a new ask to test for
+//    Promise
+//    async/await
+//    generator ???
+//    recursion ???
+
 function init(Jasper) {
   Jasper(
     "ask",
