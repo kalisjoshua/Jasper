@@ -1,0 +1,52 @@
+details.site-info {
+    position: relative;
+}
+
+details.site-info article {
+    column-gap: var(--padding);
+    display: grid;
+    grid-template-areas: 
+        "intro intro"
+        "problem solution";
+    grid-template-columns: 3fr 5fr;
+    grid-template-rows: auto;
+}
+
+details.site-info article > p {
+    grid-area: intro;
+}
+
+details.site-info article section:first-child {
+    grid-area: problem;
+}
+
+details.site-info article section:last-child {
+    grid-area: solution;
+}
+
+details.site-info summary {
+    background-color: var(--c3);
+    border-radius: 0 0 1ex 1ex;
+    color: white;
+    cursor: pointer;
+    filter: drop-shadow(0 20px 20px rgba(0, 0, 0, 0.25));
+    padding: calc(var(--padding) / 4) var(--padding);
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: filter 300ms;
+    user-select: none;
+    z-index: 999;
+}
+
+details.site-info summary:hover {
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.5));
+}
+
+details.site-info summary::marker {
+    content: 'What was that?';
+}
+
+details.site-info[open] summary::marker {
+    content: "Let's go!";
+}
