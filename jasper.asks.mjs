@@ -1,111 +1,97 @@
 // TODO: add a new ask to test for
-//    Promise
-//    async/await
 //    generator ???
 //    recursion ???
 
-function init(Jasper) {
-  Jasper(
-    "ask",
-    "Call Jasper with one argument: 'start'.",
-    "Executing functions - call the Jasper function passing a string.\n" +
-      "All of the exercises will require you to call the 'Jasper' function.",
+const asks = [
+  [
+    "Call jasper with one argument: 'start'.",
+    "Executing functions - call the jasper function passing a string.\n" +
+      "All of the exercises will require you to call the 'jasper' function.",
     function (str) {
       return "start" === str;
     },
-  );
+  ],
 
-  Jasper(
-    "ask",
+  [
     "Pass in a function that returns true.",
     "Higher order functions - functions as arguments.",
     function (cb) {
       return true === cb();
     },
-  );
+  ],
 
-  Jasper(
-    "ask",
+  [
     "Provide an object with two properties: 'a' and 'b'.",
     "Object Literals - create a simple object with two properties.",
     function (obj) {
       return void 0 !== obj.a && void 0 !== obj.b;
     },
-  );
+  ],
 
-  Jasper(
-    "ask",
-    "Pass a function that throws an error with message 'up'",
-    "Errors - throw an actual Error object.",
+  [
+    "Provide a function that throws an error with message 'down'",
+    "Errors - throw an Error instance.",
     function (fn) {
       try {
         fn();
       } catch (e) {
-        return "up" === e.message && e instanceof Error;
+        return "down" === e.message && e instanceof Error;
       }
 
       return false;
     },
-  );
+  ],
 
-  Jasper(
-    "ask",
+  [
     "Send a JSON string that has a property 'do' with the value 'good'",
     "Data interchange format - create a valid JSON string.",
     function (json) {
       return "good" === JSON.parse(json)["do"];
     },
-  );
+  ],
 
-  Jasper(
-    "ask",
-    "Write a function to sum any number of number arguments.",
-    "Use the 'arguments' object in a function like an array even though it's not.",
+  [
+    "Write a function to sum any number of arguments.",
+    "Use the rest operator, or the 'arguments' object like an array to loop over multiple arguments.",
     function (fn) {
-      var inputs,
-        sum = 0;
+      const randomInt = (limit = 32) => ~~(Math.random() * limit);
+      const length = randomInt() + 3;
 
-      // build a random length array with random values
-      inputs = Array
-        // random length array
-        .apply(null, Array(~~(Math.random() * 32)))
-        .map(function () {
-          // with random values
-          var num = ~~(Math.random() * 1024);
+      const [sum, args] = Array(length)
+        .fill(0)
+        .reduce(
+          ([sum, args]) => {
+            const num = randomInt(1024);
 
-          // caching the sum to test the results
-          sum += num;
+            return [sum + num, args.concat(num)];
+          },
+          [0, []],
+        );
 
-          return num;
-        });
-
-      return sum === fn.apply(null, inputs);
+      return sum === fn.apply(null, args);
     },
-  );
+  ],
 
-  Jasper(
-    "ask",
+  [
     "Write a function that takes an argument and returns a function that returns that argument.",
-    "Closures - use a closure to return a value scoped to a newly constructed function's scope.",
+    "Closures - use a closure to return a value scoped to a newly constructed function; loosely similar to currying.",
     function (fn) {
       return [42, "good stuff", /asdf/].reduce(function (acc, arg) {
         return acc && fn(arg)() === arg;
       }, true);
     },
-  );
+  ],
 
-  Jasper(
-    "ask",
-    "Execute Jasper with a context that matches its argument.",
-    "Function contexts - the 'this' keyword is the context a function executes in.",
+  [
+    "Execute jasper with a context that matches its argument.",
+    "Function context - the 'this' keyword is the context of function execution; there are three methods for altering this.",
     function (arg) {
       return this == arg;
     },
-  );
+  ],
 
-  Jasper(
-    "ask",
-    "Add a 'jasper' method to the prototype of the object passed to the function you write.",
+  [
+    "Add a 'jasper' method to the prototype of the object passed to the function you provide.",
     "Prototype chain - methods on the prototype of an object are available to all instances.",
     function (fn) {
       function F() {}
@@ -120,29 +106,23 @@ function init(Jasper) {
         !obj.hasOwnProperty("jasper")
       );
     },
-  );
+  ],
 
-  Jasper(
-    "ask",
-    "Pass in a function that will execute the functions passed in as arguments after 1s",
-    "Asynchronous execution + scopes.",
-    function (done, cb) {
-      var execs = 0;
+  [
+    "Pass in a function that will return a Promise; the Promise should reject if the function argument is falsey and resolve if truthy.",
+    "Promises - async operations accept callbacks for resolved (`.then`) and rejected (`.catch`) statuses.",
+    function (fn) {
+      const run = (ans) =>
+        fn(ans)
+          .then(() => true)
+          .catch(() => false)
+          .then((result) => ans === result);
 
-      function fn() {
-        ++execs === 3 && done();
-      }
-
-      cb(fn, fn, fn);
-
-      return null;
+      return Promise.all([run(true), run(false)]).then((all) =>
+        all.every((result) => true === result),
+      );
     },
-    2000,
-  );
+  ],
+];
 
-  // Jasper("ask", "", function () {});
-
-  Jasper("ask"); // lock the list of asks
-}
-
-export { init };
+export { asks };

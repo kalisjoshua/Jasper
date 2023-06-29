@@ -1,49 +1,4 @@
-var adjectives,
-  // indicators of success in answering the ask
-  answered = [],
-  API,
-  // attic will hold versions of the levels array that have been emptied
-  attic = [],
-  // check isType description for more details about these functions
-  isFunction = isType.bind(null, "function"),
-  isString = isType.bind(null, "string"),
-  // isFunction = apply_one(isType, "function"), // taking advantage of hoisting
-  // isString = apply_one(isType, "string"), // taking advantage of hoisting
-  // levels will hold all asks given to Jasper
-  levels = [],
-  // lock indicates if asks can be added or not
-  lock = false,
-  // progress is the current position of the user within the levels array
-  progress = 0;
-
-/**
- * Apply the first argument of a function
- *
- * @param  {Function} fn
- *         The function partially apply
- *
- * @param  {String}   type
- *         The type to check against
- *
- * @return {true|false}
- */
-function apply_one(fn, type) {
-  return function (obj) {
-    return fn(type, obj);
-  };
-}
-
-/**
- * Deterime if argument is a number
- *
- * @param  {anything}  n
- *
- * @return {Boolean}
- *
- */
-function isNumber(n) {
-  return !isNaN(parseFloat(n)) && isFinite(n);
-}
+import * as tps from "./tinyPubSub.mjs";
 
 /**
  * Test an object type against a string as a regex
@@ -56,16 +11,35 @@ function isNumber(n) {
  *
  * @return {Boolean}
  */
-function isType(type, obj) {
-  return new RegExp(type, "i").test({}.toString.call(obj));
-}
+const isType = (type, obj) => new RegExp(type, "i").test({}.toString.call(obj));
+const isFunction = isType.bind(null, "function");
+/**
+ * Deterime if argument is a number
+ *
+ * @param  {anything}  n
+ *
+ * @return {Boolean}
+ *
+ */
+const isNumber = (n) => !isNaN(parseFloat(n)) && isFinite(n);
+const isString = isType.bind(null, "string");
+
+let answered = [];
+// challenges will hold all asks given to Jasper
+let challenges = [];
+// all of the functions registered to be notified of events
+let listeners = [];
+// lock indicates if asks can be added or not
+let lock = false;
+// progress is the current position of the user within the challenges array
+let progress = 0;
 
 /**
  * Randomize a list of congratulatory adjectives
  *
  * @return {String}
  */
-adjectives = (function () {
+const adjectives = (() => {
   let words = [
     "Admirable",
     "Awesome",
@@ -89,13 +63,9 @@ adjectives = (function () {
     "Swanky",
   ];
 
-  return function () {
-    const selected = ~~(Math.random() * words.length) % words.length;
+  const rand = (limit = 2) => ~~(Math.random() * limit);
 
-    words = words.slice(selected).concat(words.slice(0, selected));
-
-    return ("%" + ["!", "."][~~(Math.random() * 2)]).replace("%", words[0]);
-  };
+  return () => `${words[rand(words.length)]}${["!", "."][rand()]}`;
 })();
 
 /**
@@ -103,7 +73,7 @@ adjectives = (function () {
  *
  * @type {Object}
  */
-API = {
+const API = {
   /**
    * Register a new ask (challenge) with Jasper to extend the fun
    *
@@ -118,7 +88,7 @@ API = {
    *
    * @return undefined
    */
-  ask: function api_ask(intro, hint, fn, async) {
+  ask(intro, hint, fn, async) {
     if (!!lock) {
       throw new Error("Jasper has been locked, no new asks may be added.");
     }
@@ -144,17 +114,11 @@ API = {
         throw new Error("Challenge must be a Function.");
       }
 
-      if ("undefined" !== typeof async && isNumber(async) !== true) {
-        throw new Error("Async parameter must be a number.");
-      }
-
-      // Asks are synchronous by default
-      async = async || 0;
-
       fn.intro = intro;
       fn.hint = hint;
-      fn.async = async;
-      levels.push(fn);
+      // Asks are synchronous by default
+      fn.async = async || 0;
+      challenges.push(fn);
     } else {
       // no arguments passed
       // lock the implementation so no more asks can be added
@@ -163,8 +127,8 @@ API = {
   },
 
   /**
-   * Remove all asks to start from scratch
-   * This must be executed with a context of 'true' to prevent accidental call
+   * Remove all asks to start from scratch; helpful primarily for testing.
+   * This must be executed with an arg of 'true' to prevent accidental call
    *
    * @param  {true}         arg
    *         Passing anything other than true will throw an error
@@ -174,17 +138,9 @@ API = {
    *
    * @return undefined
    */
-  empty: function api_empty(arg, atticToo) {
+  empty(arg) {
     if (true === arg) {
-      if (levels.length && !atticToo) {
-        attic.push(levels);
-      }
-
-      if (atticToo) {
-        attic = [];
-      }
-
-      levels = [];
+      challenges = [];
       lock = false;
       API.restart();
     } else {
@@ -192,20 +148,15 @@ API = {
     }
   },
 
-  // , extras: function () {
-  //   // global variables: help, start, hint, jasper
-  //   // to evaluate as a call to Jasper("hint") via valueOf/toString
-  // }
-
   /**
    * Show the current level's intro text
    *
    * @return {String}
    *         The intro text of the current level, or the end text
    */
-  help: function api_help(prepend) {
-    return progress < levels.length && false !== answered[progress]
-      ? levels[progress].intro.replace("#", 1 + progress)
+  help(prepend) {
+    return progress < challenges.length && false !== answered[progress]
+      ? challenges[progress].intro.replace("#", 1 + progress)
       : "\n Congratulations you're done; start over with Jasper('restart').";
   },
 
@@ -218,12 +169,16 @@ API = {
    * @return {String}
    *         The resulting string to be output
    */
-  hint: function api_hint(prepend) {
+  hint(prepend) {
     return (
       (prepend || "") +
-      levels[progress].hint +
+      challenges[progress].hint +
       (prepend ? "\n " + API.help() : "")
     );
+  },
+
+  listen(fn) {
+    tps.sub(fn);
   },
 
   /**
@@ -232,37 +187,14 @@ API = {
    * @return {String}
    *         Message telling the user they are ready to go again
    */
-  restart: function api_restart() {
+  restart() {
     answered = [];
     progress = 0;
     return "All clear; go for it!\n " + API.help();
   },
 
   /**
-   * Restore previously emptied asks
-   * This must be executed with a context of 'true' to prevent accidental call
-   *
-   * @param  {true}     arg
-   *         Passing anything other than true will throw an error
-   *
-   * @return undefined
-   */
-  restore: function api_restore(arg) {
-    if (true === arg) {
-      if (attic.length) {
-        levels = attic.pop();
-      } else {
-        throw new Error("Restore called with no history to restore.");
-      }
-
-      return API.restart();
-    } else {
-      throw new Error("Restore must be passed first_argument === 'true'.");
-    }
-  },
-
-  /**
-   * Skip to an ask/challenge without completing the current on
+   * Skip an ask (challenge) without completing
    *
    * @param  {Integer} num
    *         A positive number skips forward from the current location -
@@ -271,7 +203,7 @@ API = {
    * @return {String}
    *         The help text for the next ask/challenge
    */
-  skip: function api_skip(search) {
+  skip(search) {
     var len;
 
     if (void 0 === search || isNumber(search)) {
@@ -289,7 +221,7 @@ API = {
       answered[progress] = answered[progress] || false;
 
       // make sure to skip in bounds
-      progress = (progress + ~~search) % levels.length;
+      progress = (progress + ~~search) % challenges.length;
     } else {
       throw new Error(
         "Skip needs a number to skip to, " +
@@ -314,73 +246,66 @@ API = {
  *         Prompt for the user to take next steps
  *
  */
-function Jasper(command, arg) {
-  /*jshint validthis:true*/
-  var result;
-
+function Jasper(command, ...args) {
   // default to the 'help' util method
-  command = command || "help";
+  command = command ?? "help";
 
   // run a util method if asked for or no arguments
   if (API[command] || 0 === arguments.length) {
     // only pass the arguments if provided; zero is a valid argument sometimes
-    result =
-      arg || 0 === arg
-        ? API[command].apply(this, [].slice.call(arguments, 1))
-        : API[command].call(this);
-  } else {
-    try {
-      // pass the arguments to the level function to check correctness
-      // asynchronous test
-      if (levels[progress].async) {
-        result = "[Asynchronous level] Waiting for the result...";
-        var timeout = setTimeout(function () {
-          console.log("Time is out ! Retry !");
-          timeout = 0;
-        }, levels[progress].async);
-        var args = [].slice.call(arguments);
-        args.unshift(function () {
-          if (timeout) {
-            clearTimeout(timeout);
-            answered[progress] = true;
-            result = API.hint(adjectives() + "\n Level " + progress + ": ");
-            progress++;
-            result += `\n\nNext Task: ${API.help()}`;
-          } else {
-            result = "Ooops, you're a bit late, keep the good work ;).";
-          }
-          console.log(result);
-        });
-        levels[progress].apply(this, args);
-        // synchronous test
-      } else if (levels[progress].apply(this, arguments)) {
-        answered[progress] = true;
+    return Promise.resolve(API[command].apply(this, args)).then((result) => {
+      tps.pub({
+        invocation: { command, args },
+        challenge: { level: progress, info: challenges[progress] },
+      });
 
-        result = API.hint(`${adjectives()} \n Level ${progress}: `);
-
-        progress++;
-
-        result += `\n\nNext Task: ${API.help()}`;
-      } else {
-        result = "Not quite try again.";
-      }
-    } catch (e) {
-      if (/not\sa\sfunction/i.test(e.message)) {
-        result = "Remember that time I told you to pass a function?";
-      } else if (/JSON/i.test(e.message)) {
-        result = "The JSON string needs to be properly formatted.";
-      } else {
-        result = "I'm not sure at all what you are trying to do.";
-      }
-
-      throw e;
-    }
+      return result;
+    });
   }
 
-  return result;
+  let result = false;
+
+  try {
+    result = Promise.resolve(challenges[progress].apply(this, arguments));
+  } catch (error) {
+    let message;
+
+    if (/not\sa\sfunction/i.test(error.message)) {
+      message = "Remember that time you were asked to pass a function?";
+    } else if (/JSON/i.test(error.message)) {
+      message = "The JSON string needs to be properly formatted.";
+    } else {
+      message = "It's a little unclear what you are trying to do.";
+    }
+
+    result = Promise.reject({ error, message });
+  }
+
+  return result.then((result) => {
+    tps.pub({
+      invocation: { command, args },
+      challenge: { level: progress, info: challenges[progress] },
+      result,
+    });
+
+    if (result) {
+      progress += 1;
+
+      const result = challenges[progress]
+        ? API.hint(`${adjectives()} \n Level ${progress}: `) +
+          `\n\nNext Task: ${API.help()}`
+        : API.help();
+
+      answered[progress] = true;
+
+      return result;
+    } else {
+      return `Not quite try again.\n\n${API.help()}`;
+    }
+  });
 }
 
 // hints to help people find the path to enlightenment
-Jasper.help = Jasper.start = Jasper.toString = () => Jasper();
+Jasper.help = Jasper.start = Jasper.toString = Jasper;
 
 export { Jasper };
