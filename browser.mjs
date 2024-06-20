@@ -8,7 +8,7 @@ let once = () => {
   once = () => {};
 };
 
-window.Jasper = new Proxy(Jasper, {
+window.Jasper = window.jasper = new Proxy(Jasper, {
   apply(fn, context, args) {
     fn.apply(context, args)
       .catch(({ error, message }) => {
